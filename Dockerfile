@@ -3,28 +3,26 @@ FROM node:18-alpine
 # Create app directory
 WORKDIR /app
 
-# Copy shared agent files
-COPY agents/shared/package.json ./shared/
-WORKDIR /app/shared
+# Copy package.json first for better caching
+COPY package.json ./
 RUN npm install
 
-# Copy all agent files
+# Copy shared agent dependencies
+COPY agents/shared/package.json ./agents/shared/
+WORKDIR /app/agents/shared
+RUN npm install
+
+# Copy all files
 WORKDIR /app
-COPY agents/ ./agents/
-COPY start-all-agents.js ./
+COPY . .
 
-# Install dependencies in each agent folder
-RUN cd agents/ceo && npm install && \
-    cd ../coda && npm install && \
-    cd ../ghl && npm install && \
-    cd ../arive && npm install && \
-    cd ../pricing && npm install && \
-    cd ../comms && npm install && \
-    cd ../gmail && npm install && \
-    cd ../research && npm install
+# Install dependencies for each agent
+RUN for agent in ceo coda ghl arive pricing comms gmail research; do \
+      cd agents/$agent && npm install && cd ../..; \
+    done
 
-# Expose port (not really needed for Discord bots but good practice)
-EXPOSE 3000
+# Expose port for Railway health checks
+EXPOSE $PORT
 
 # Start all agents
 CMD ["node", "start-all-agents.js"]
