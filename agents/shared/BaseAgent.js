@@ -78,10 +78,14 @@ class BaseAgent {
   async getAIResponse(input) {
     const systemPrompt = this.getSystemPrompt();
     
+    // CEO uses Opus for better reasoning, specialists use Sonnet for efficiency
+    const model = this.agentId === 'ceo' ? 'claude-3-opus-20240229' : 'claude-3-sonnet-20240229';
+    const maxTokens = this.agentId === 'ceo' ? 2000 : 1000; // More tokens for CEO orchestration
+    
     try {
       const response = await this.anthropic.messages.create({
-        model: 'claude-3-sonnet-20240229',
-        max_tokens: 1000,
+        model: model,
+        max_tokens: maxTokens,
         system: systemPrompt,
         messages: [{
           role: 'user',
@@ -89,6 +93,7 @@ class BaseAgent {
         }]
       });
 
+      console.log(`🧠 ${this.agentId.toUpperCase()} using ${model}`);
       return response.content[0].text;
     } catch (error) {
       console.error('AI API error:', error);
