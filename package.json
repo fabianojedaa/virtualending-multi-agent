@@ -1,0 +1,22 @@
+{
+  "name": "virtualending-multi-agent",
+  "version": "1.0.0",
+  "description": "VirtuaLending Multi-Agent Discord System",
+  "main": "start-all-agents.js",
+  "scripts": {
+    "start": "node start-all-agents.js",
+    "dev": "node start-all-agents.js",
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "@anthropic-ai/sdk": "^0.20.0",
+    "pg": "^8.11.3",
+    "redis": "^4.6.10"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
