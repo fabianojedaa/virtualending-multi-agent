@@ -1,0 +1,165 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (shared by all agents)
+  postgres:
+    image: postgres:15
+    container_name: virtualending-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: virtualending2026
+      POSTGRES_DB: virtualending
+      POSTGRES_USER: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis (shared cache)
+  redis:
+    image: redis:7-alpine
+    container_name: virtualending-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  # CEO Agent (Main orchestrator)
+  agent-ceo:
+    image: node:18-alpine
+    container_name: virtualending-ceo
+    working_dir: /app
+    volumes:
+      - ./agents/ceo:/app
+      - ./shared:/shared
+    environment:
+      - AGENT_ID=ceo
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN_CEO}
+      - DISCORD_GUILD_ID=1477241099360800803
+      - DISCORD_CHANNEL_ID=1477241100199788629
+    command: ["npm", "start"]
+    depends_on:
+      - postgres
+      - redis
+
+  # Specialist Agents
+  agent-coda:
+    image: node:18-alpine
+    container_name: virtualending-coda
+    working_dir: /app
+    volumes:
+      - ./agents/coda:/app
+      - ./shared:/shared
+    environment:
+      - AGENT_ID=coda
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN_CODA}
+      - DISCORD_GUILD_ID=1477241099360800803
+      - DISCORD_CHANNEL_ID=1477565950168666153
+    command: ["npm", "start"]
+    depends_on:
+      - postgres
+      - redis
+
+  agent-ghl:
+    image: node:18-alpine
+    container_name: virtualending-ghl
+    working_dir: /app
+    volumes:
+      - ./agents/ghl:/app
+      - ./shared:/shared
+    environment:
+      - AGENT_ID=ghl
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN_GHL}
+      - DISCORD_GUILD_ID=1477241099360800803
+      - DISCORD_CHANNEL_ID=1477565867561844736
+    command: ["npm", "start"]
+    depends_on:
+      - postgres
+      - redis
+
+  agent-arive:
+    image: node:18-alpine
+    container_name: virtualending-arive
+    working_dir: /app
+    volumes:
+      - ./agents/arive:/app
+      - ./shared:/shared
+    environment:
+      - AGENT_ID=arive
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN_ARIVE}
+      - DISCORD_GUILD_ID=1477241099360800803
+      - DISCORD_CHANNEL_ID=1477565417957359740
+    command: ["npm", "start"]
+    depends_on:
+      - postgres
+      - redis
+
+  agent-pricing:
+    image: node:18-alpine
+    container_name: virtualending-pricing
+    working_dir: /app
+    volumes:
+      - ./agents/pricing:/app
+      - ./shared:/shared
+    environment:
+      - AGENT_ID=pricing
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN_PRICING}
+      - DISCORD_GUILD_ID=1477241099360800803
+      - DISCORD_CHANNEL_ID=1477565359862321245
+    command: ["npm", "start"]
+    depends_on:
+      - postgres
+      - redis
+
+  agent-comms:
+    image: node:18-alpine
+    container_name: virtualending-comms
+    working_dir: /app
+    volumes:
+      - ./agents/comms:/app
+      - ./shared:/shared
+    environment:
+      - AGENT_ID=comms
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN_COMMS}
+      - DISCORD_GUILD_ID=1477241099360800803
+      - DISCORD_CHANNEL_ID=1477565602309734562
+    command: ["npm", "start"]
+    depends_on:
+      - postgres
+      - redis
+
+  agent-gmail:
+    image: node:18-alpine
+    container_name: virtualending-gmail
+    working_dir: /app
+    volumes:
+      - ./agents/gmail:/app
+      - ./shared:/shared
+    environment:
+      - AGENT_ID=gmail
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN_GMAIL}
+      - DISCORD_GUILD_ID=1477241099360800803
+      - DISCORD_CHANNEL_ID=1481041719985442837
+    command: ["npm", "start"]
+    depends_on:
+      - postgres
+      - redis
+
+  agent-research:
+    image: node:18-alpine
+    container_name: virtualending-research
+    working_dir: /app
+    volumes:
+      - ./agents/research:/app
+      - ./shared:/shared
+    environment:
+      - AGENT_ID=research
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN_RESEARCH}
+      - DISCORD_GUILD_ID=1477241099360800803
+      - DISCORD_CHANNEL_ID=1481041745415372912
+    command: ["npm", "start"]
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  postgres_data:

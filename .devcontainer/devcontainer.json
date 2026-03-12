@@ -1,0 +1,30 @@
+{
+  "name": "VirtuaLending Multi-Agent System",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    }
+  },
+  "forwardPorts": [5432, 6379],
+  "portsAttributes": {
+    "5432": {
+      "label": "PostgreSQL Database"
+    },
+    "6379": {
+      "label": "Redis Cache"
+    }
+  },
+  "postCreateCommand": "chmod +x setup-agents.sh && ./setup-agents.sh && echo '🎯 Run: cp .env.template .env and add your Discord bot tokens, then docker-compose up -d'",
+  "remoteUser": "codespace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-json",
+        "ms-vscode-remote.remote-containers",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}
